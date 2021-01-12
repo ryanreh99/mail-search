@@ -52,4 +52,5 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
     all_msgs = lib.get_messages(service)
     print(all_msgs)
 
+    # TODO: Return Authorization token.
     return HttpResponse("Authentication Successful.")

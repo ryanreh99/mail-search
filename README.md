@@ -11,12 +11,12 @@
 
   **Note:** If you want to use a different redirect URI or client secret file, just update the appropriate values in the `config.ini` and `urls.py` file.
 
-* `git clone git@github.com:ryanreh99/mail-search.git`
-
-* [Activate the virtual environment](https://docs.python.org/3/tutorial/venv.html).
-
 ```shell
+git clone git@github.com:ryanreh99/mail-search.git
+# Activate the virtual environment
 cd mail-server
+pip install -r requirements.txt
+
 python manage.py runserver
 python google_oauth2.py # In a separate terminal
 ```
