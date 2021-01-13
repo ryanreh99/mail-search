@@ -49,8 +49,10 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
 
     # TASK 2
     service = build('gmail', 'v1', credentials=credentials)
-    all_msgs = lib.get_messages(service)
-    print(all_msgs)
+    try:
+        all_msgs = lib.get_all_messages(service)
+    except Exception as e:
+        return HttpResponse("GMAIL API RELATED ERROR:\n\n" + str(e))
 
     # TODO: Return Authorization token.
     return HttpResponse("Authentication Successful.")
