@@ -46,10 +46,12 @@ def build_msg_dict(msg: dict) -> dict:
     if message_part['mimeType'] != 'text/plain':
         return {}
 
+    # data is a base64url encoded string.
+    #
     # '====' is added to avoid base64 incorrect padding error
     # https://gist.github.com/perrygeo/ee7c65bb1541ff6ac770
     body = message_part['body']['data'] + '===='
-    body = base64.b64decode(body).decode("utf-8", 'ignore')
+    body = base64.urlsafe_b64decode(body).decode("utf-8", 'ignore')
     msg_dict['Body'] = body
 
     return msg_dict
