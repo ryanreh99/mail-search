@@ -1,10 +1,10 @@
 from urllib.parse import urlparse, parse_qs
 
-from . import lib
-
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
+
+from server.lib.utils import get_all_messages
 
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
@@ -19,7 +19,6 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
         return HttpResponse("Authentication failed due to lack of user consent.")
 
     if url_query.get('state', None) is None:
-        # TASK 1
         return HttpResponse("Do not navigate to this URL, run the standalone script.")
 
     state: str = url_query['state'][0]
@@ -47,10 +46,9 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
     # with open('token.pickle', 'wb') as token:
     #     pickle.dump(creds, token)
 
-    # TASK 2
     service = build('gmail', 'v1', credentials=credentials)
     try:
-        all_msgs = lib.get_all_messages(service)
+        all_msgs = get_all_messages(service)
     except Exception as e:
         return HttpResponse("GMAIL API RELATED ERROR:\n\n" + str(e))
 

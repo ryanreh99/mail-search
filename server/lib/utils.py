@@ -4,14 +4,15 @@ from datetime import datetime
 
 from django.conf import settings
 
-from .models import UserProfile, Message
-
+from . import db
 
 def build_msg_dict(msg: dict) -> dict:
     msg_dict = {}
+    msg_dict['id'] = msg['id']
 
-    # UNREAD, IMPORTANT, INBOX, CATEGORY_PERSONAL
-    msg_dict['Labels'] = msg['labelIds']
+    label_keys = [label.lower() for label in msg['labelIds']]
+    label_values = [True] * len(msg['labelIds'])
+    msg_dict['Labels'] = dict(zip(label_keys, label_values))
 
     payload = msg['payload']
     if payload['mimeType'] != 'multipart/alternative':
@@ -34,7 +35,7 @@ def build_msg_dict(msg: dict) -> dict:
             # Convert Date headers which is in the
             # standard RFC 2822 email headers format.
             #
-            # Index 6+ unusable
+            # Indexes 6+ are unusable
             # https://docs.python.org/3/library/email.utils.html#email.utils.parsedate
             date_tuple = email.utils.parsedate(value)[:6]
             value = datetime(*date_tuple)
@@ -56,23 +57,6 @@ def build_msg_dict(msg: dict) -> dict:
 
     return msg_dict
 
-def bulk_create_users(emails_set: set) -> None:
-    UserProfile.objects.bulk_create([
-        UserProfile(
-            email=email,
-            is_active=False,
-        ) for email in emails_set
-    ], ignore_conflicts=True)
-
-def bulk_create_messages(all_msgs: list) -> None:
-    Message.objects.bulk_create([
-        Message(
-            sender=UserProfile.objects.get(email=msg_ob['From']),
-            receiver=UserProfile.objects.get(email=msg_ob['To']),
-            content=msg_ob['Body'],
-            date_sent=msg_ob['Date'],
-        ) for msg_ob in all_msgs
-    ], ignore_conflicts=True)
 
 def get_all_messages(service, user_id="me"):
     message_endpoint = service.users().messages()
@@ -98,12 +82,11 @@ def get_all_messages(service, user_id="me"):
         if len(msg_dict) == 0:
             continue
         all_msgs.append(msg_dict)
-        break
 
         user_emails.add(msg_dict['From'])
         user_emails.add(msg_dict['To'])
 
-    bulk_create_users(user_emails)
-    bulk_create_messages(all_msgs)
+    db.bulk_create_users(user_emails)
+    db.bulk_create_messages(all_msgs)
 
     return all_msgs

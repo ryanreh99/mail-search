@@ -18,5 +18,8 @@ cd mail-server
 pip install -r requirements.txt
 
 python manage.py runserver
-python google_oauth2.py # In a separate terminal
+python -m scripts.google_oauth2 # In a separate terminal
+
+# To test another user: reset the db by running -
+python -m scripts.flush_db
 ```

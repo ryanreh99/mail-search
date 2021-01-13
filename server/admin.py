@@ -5,12 +5,14 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
-from .models import UserProfile, Message
+from .models import UserProfile, Message, MessageConfig
 
 
 class UserCreationForm(forms.ModelForm):
-    """A form for creating new users. Includes all the required
-    fields, plus a repeated password."""
+    """
+    A form for creating new users. Includes all the required
+    fields, plus a repeated password.
+    """
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
 
@@ -36,7 +38,8 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
-    """A form for updating users. Includes all the fields on
+    """
+    A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
     password hash display field.
     """
@@ -51,6 +54,7 @@ class UserChangeForm(forms.ModelForm):
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
         return self.initial["password"]
+
 
 # https://docs.djangoproject.com/en/3.1/topics/auth/customizing/#a-full-example
 class UserAdmin(BaseUserAdmin):
@@ -70,6 +74,7 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(UserProfile, UserAdmin)
 admin.site.register(Message)
+admin.site.register(MessageConfig)
 
 # since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
