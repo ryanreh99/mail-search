@@ -1,0 +1,31 @@
+{
+  "type": "Any",
+  "rules": [
+    {
+      "field": "From",
+      "predicate": "Not equals",
+      "value": ".com"
+    },
+    {
+      "field": "Subject",
+      "predicate": "Contains",
+      "value": "medium"
+    },
+    {
+      "field": "Date Received",
+      "predicate": "Greater than",
+      "value": "25/11/2020"
+    }
+  ],
+  "actions": [
+    {
+      "view": "True"
+    },
+    {
+      "mark_read": "True"
+    },
+    {
+      "move": "INBOX"
+    }
+  ]
+}

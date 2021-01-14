@@ -73,7 +73,7 @@ paths:
           schema:
             type: string
           description: >-
-              can only take values - 'contains' and 'not equals'
+              can only take values - 'Contains' and 'Not equals'
           example: contains
         - in: query
           name: value
@@ -106,7 +106,7 @@ paths:
           schema:
             type: string
           description: >-
-              can only take values - 'less than' and 'greater than'
+              can only take values - 'Less than' and 'Greater than'
           example: contains
         - in: query
           name: value
@@ -139,14 +139,14 @@ components:
     MessageIds:
       allOf:
         - required:
-          - users
+          - ids
           properties:
-            users:
+            ids:
               type: array
               items:
                 type: string
           example: {
-            "users": [
+            "ids": [
               "176ff89c5e864e21",
               "176ff3770e261142"
             ]

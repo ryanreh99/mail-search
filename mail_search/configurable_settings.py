@@ -17,6 +17,7 @@ SCOPES = [
 ]
 
 SECTION = "DEVELOPMENT" if DEVEL_MODE else "PRODUCTION"
+RULES = join(ROOT_DIR, config[SECTION]['rules'])
 CLIENT_SECRET = join(ROOT_DIR, config[SECTION]['client_secret'])
 REDIRECT_URI = config[SECTION]['redirect_uri']
 MAX_RESULTS = config[SECTION]['fetch_size']

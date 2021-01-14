@@ -18,6 +18,7 @@ from .configurable_settings import (
     CLIENT_SECRET,
     REDIRECT_URI,
     MAX_RESULTS,
+    RULES,
     onStartUp,
 )
 

@@ -6,7 +6,8 @@ from server.lib.response import json_success, json_error
 from server.lib.db import (
     fetch_using_users,
     fetch_using_subject,
-    fetch_using_datetime
+    fetch_using_datetime,
+    fetch_messages_using_id,
 )
 from server.lib.validation import (
     validate_string_fields,
@@ -62,4 +63,16 @@ def fetch_datetime(request: HttpRequest) -> HttpResponse:
 
     return json_success(
         {'ids': fetch_using_datetime(field, predicate, value)}
+    )
+
+@csrf_exempt
+def display_messages(request: HttpRequest) -> HttpResponse:
+    if request.method != "GET":
+        return json_error(INCORRECT_REQUEST_METHOD_ERROR)
+    
+    ids = request.GET.get('ids', '')
+    ids_list = ids.split(',')
+
+    return json_success(
+        {'ids': fetch_messages_using_id(ids_list, config=True)}
     )

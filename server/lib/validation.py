@@ -33,9 +33,9 @@ def validate_string_fields(request: HttpRequest, users=True):
         if field != 'Subject':
             return False, json_error(get_INCORRECT_REQUEST_PARAMS('field'))
 
-    if predicate == 'contains':
+    if predicate == 'Contains':
         predicate = 'LIKE'
-    elif predicate == 'not equals':
+    elif predicate == 'Not equals':
         predicate = 'NOT LIKE'
     else:
         return False, json_error(get_INCORRECT_REQUEST_PARAMS('predicate'))
@@ -55,9 +55,9 @@ def validate_datetime_fields(request: HttpRequest):
     if field != 'Date Received':
         return False, json_error(get_INCORRECT_REQUEST_PARAMS('field'))
     
-    if predicate == 'less than':
+    if predicate == 'Less than':
         predicate = 'lte'
-    elif predicate == 'greater than':
+    elif predicate == 'Greater than':
         predicate = 'gte'
     else:
         return False, json_error(get_INCORRECT_REQUEST_PARAMS('predicate'))

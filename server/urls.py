@@ -4,7 +4,8 @@ from server.views.auth import oauth2callback
 from server.views.api import (
     fetch_users,
     fetch_subject,
-    fetch_datetime
+    fetch_datetime,
+    display_messages,
 )
 
 
@@ -13,4 +14,5 @@ urlpatterns = [
     path('messages/user/', fetch_users, name='fetch-users'),
     path('messages/subject/', fetch_subject, name='fetch-subject'),
     path('messages/datetime/', fetch_datetime, name='fetch-datetime'),
+    path('messages/view/', display_messages, name='display-messages'),
 ]

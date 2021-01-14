@@ -85,3 +85,14 @@ def fetch_using_datetime(field: str, predicate: str, value: str) -> list:
         queryset = Message.objects.filter(date_sent__gte=value)
 
     return [obj['id'] for obj in queryset.values('id')]
+
+def fetch_messages_using_id(ids_list: list, config=True):
+    """
+    Get all messages or config ids for list of message ids.
+    """
+    values = ['id', 'config_id']
+    if not config:
+        values += ['sender_id', 'receiver_id', 'content']
+
+    queryset = Message.objects.filter(id__in=ids_list).values(*values)
+    return [i for i in queryset]
