@@ -1,6 +1,6 @@
 # Mail Search
 
-### Setup and Usage:
+## Setup and Usage:
 
 * Follow the steps mentioned in the [`Google OAuth2 docs`](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred).
   
@@ -23,3 +23,8 @@ python -m scripts.google_oauth2 # In a separate terminal
 # To test another user: reset the db by running -
 python -m scripts.flush_db
 ```
+___
+
+## API Documentation:
+
+Go to [`swaggerhub/ryanreh99/mail-search`](https://app.swaggerhub.com/apis/ryanreh99/mail-search/1.0.0)

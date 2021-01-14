@@ -24,14 +24,14 @@ def build_msg_dict(msg: dict) -> dict:
         key = header['name']
         value = header['value']
 
-        if key == 'From':
+        if key in ['From', 'To']:
             # Obtain email id which is in the format:
             # User Name <username@gmail.com>
             if '<' in value:
                 start_index: int = value.find('<') + 1
                 value = value[start_index : -1]
         
-        if key == 'Date':
+        elif key == 'Date':
             # Convert Date headers which is in the
             # standard RFC 2822 email headers format.
             #

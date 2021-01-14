@@ -10,16 +10,22 @@ from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 
 
+ACCESS_DENIED = "Authentication failed due to lack of user consent."
+RUN_SCRIPT = "Do not navigate to this URL, run the standalone script."
+SUCCESS = "Authentication Successful."
+GSERVICE_ERROR = "GMAIL API RELATED ERROR: "
+
+
 def oauth2callback(request: HttpRequest) -> HttpResponse:
     URI = request.get_full_path()
     network_data = urlparse(URI)
     url_query: dict = parse_qs(network_data.query)
 
     if url_query.get('error', None) is not None and url_query['error'][0] == 'access_denied':
-        return HttpResponse("Authentication failed due to lack of user consent.")
+        return HttpResponse(ACCESS_DENIED)
 
     if url_query.get('state', None) is None:
-        return HttpResponse("Do not navigate to this URL, run the standalone script.")
+        return HttpResponse(RUN_SCRIPT)
 
     state: str = url_query['state'][0]
     flow = Flow.from_client_secrets_file(
@@ -50,7 +56,7 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
     try:
         all_msgs = get_all_messages(service)
     except Exception as e:
-        return HttpResponse("GMAIL API RELATED ERROR:\n\n" + str(e))
+        return HttpResponse(GSERVICE_ERROR + str(e))
 
     # TODO: Return Authorization token.
-    return HttpResponse("Authentication Successful.")
+    return HttpResponse(SUCCESS)
