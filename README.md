@@ -27,4 +27,8 @@ ___
 
 ## API Documentation:
 
-Go to [`swaggerhub/ryanreh99/mail-search`](https://app.swaggerhub.com/apis/ryanreh99/mail-search/1.0.0)
+View the `mail_search.yaml` file.
+
+OR
+
+Go to [`swaggerhub/ryanreh99/mail-search`](https://app.swaggerhub.com/apis/ryanreh99/mail-search/1.0.0).

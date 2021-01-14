@@ -1,3 +1,4 @@
+from django.db import connection
 from django.db import transaction
 
 from ..models import UserProfile, Message, MessageConfig
@@ -31,3 +32,56 @@ def bulk_create_messages(all_msgs: list) -> None:
         ) for msg_ob in all_msgs
     ]
     Message.objects.bulk_create(messages_to_create, ignore_conflicts=True)
+
+
+def fetch_using_users(field: str, predicate: str, value: str) -> list:
+    """
+    Get message ids for user fields using any predicate.
+    """
+
+    sql = f'''
+SELECT
+    msg.id
+FROM
+    server_Message msg
+INNER JOIN
+    server_UserProfile user
+ON
+    msg.{field}_id = user.id
+WHERE
+        user.email
+{predicate}
+    '%{value}%'
+'''
+    msg_ids = []
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        msg_ids = [
+            i[0]
+            for i in cursor.fetchall()
+        ]
+    
+    return msg_ids
+
+def fetch_using_subject(field: str, predicate: str, value: str) -> list:
+    """
+    Get message ids for subject field using any predicate.
+    """
+    if (predicate == 'LIKE'):
+        queryset = Message.objects.filter(content__contains=value)
+    else: # NOT LIKE
+        queryset = Message.objects.exclude(content__contains=value)
+
+    return [obj['id'] for obj in queryset.values('id')]
+
+
+def fetch_using_datetime(field: str, predicate: str, value: str) -> list:
+    """
+    Get message ids for datetime fields using any predicate.
+    """
+    if (predicate == 'lte'):
+        queryset = Message.objects.filter(date_sent__lte=value)
+    else: # gte
+        queryset = Message.objects.filter(date_sent__gte=value)
+
+    return [obj['id'] for obj in queryset.values('id')]

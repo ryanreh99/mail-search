@@ -1,0 +1,162 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ryanreh99/mail-search/1.0.0
+  - description: Localhost
+    url: http://127.0.0.1:8000/
+info:
+  version: "1.0.0"
+  title: Mail-Search
+  description: >-
+    API specification of the mail-search application for searching and taking actions on your gmail account using the OAuth2 Application Flow.
+security:
+  - google-oauth2:
+      - read
+      - write
+paths:
+  /account/google/:
+    get:
+      summary: oauth2callback
+      description: >-
+        Do not navigate to this URL, run the standalone script.
+      responses:
+        '200':
+          description: OK
+  /messages/user/:
+    get:
+      summary: Get message ids by checking email contents.
+      security: []
+      parameters:
+        - in: query
+          name: field
+          schema:
+            type: string
+          description: >-
+              can only take values - 'From' and 'To'
+          example: From
+        - in: query
+          name: predicate
+          schema:
+            type: string
+          description: >-
+              can only take values - 'contains' and 'not equals'
+          example: contains
+        - in: query
+          name: value
+          schema:
+            type: string
+          description: >-
+              part of emails to search for
+          example: '@gmail.com'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonResponse'
+  /messages/subject/:
+    get:
+      summary: Get message ids by checking body contents.
+      security: []
+      parameters:
+        - in: query
+          name: field
+          schema:
+            type: string
+          description: >-
+              can only take value - 'Subject'
+          example: Subject
+        - in: query
+          name: predicate
+          schema:
+            type: string
+          description: >-
+              can only take values - 'contains' and 'not equals'
+          example: contains
+        - in: query
+          name: value
+          schema:
+            type: string
+          description: >-
+              part of the body to search for.
+          example: 'Unsubscribe'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonResponse'
+  /messages/datetime/:
+    get:
+      summary: Get message ids by comparing date sent.
+      security: []
+      parameters:
+        - in: query
+          name: field
+          schema:
+            type: string
+          description: >-
+              can only take value - 'Date Received'
+          example: Subject
+        - in: query
+          name: predicate
+          schema:
+            type: string
+          description: >-
+              can only take values - 'less than' and 'greater than'
+          example: contains
+        - in: query
+          name: value
+          schema:
+            type: string
+          description: >-
+              Has to be in "DD/MM/YYYY" format.
+          example: '24/06/2021'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonResponse'
+components:
+  schemas:
+    JsonResponse:
+      allOf:
+        - $ref: "#/components/schemas/MessageIds"
+        - required:
+          - result
+          properties:
+            result:
+              type: string
+              enum:
+                - success
+                - error
+          example: {"result": "success"}
+    MessageIds:
+      allOf:
+        - required:
+          - users
+          properties:
+            users:
+              type: array
+              items:
+                type: string
+          example: {
+            "users": [
+              "176ff89c5e864e21",
+              "176ff3770e261142"
+            ]
+          }
+  securitySchemes:
+    google-oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'https://oauth2.googleapis.com/token'
+          scopes:
+            write: allows modifying resources
+            read: allows reading resources
