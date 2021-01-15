@@ -62,6 +62,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# For persistent, cached data, a write-through cache is used.
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
 ROOT_URLCONF = 'mail_search.urls'
 
 TEMPLATES = [

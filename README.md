@@ -16,7 +16,7 @@
 ```shell
 git clone git@github.com:ryanreh99/mail-search.git
 # Activate the virtual environment
-cd mail-server
+cd mail-search
 pip install -r requirements.txt
 
 # Start the Django server
@@ -71,10 +71,7 @@ These are the other values in can take:
   actions: [
     ...
     {
-      view: True
-    },
-    {
-      mark_read | mark_unread: True
+      view | mark_read | mark_unread: True
     },
     {
       move: Any value in `POSSIBLE_LABELS` (found in `models.py`)

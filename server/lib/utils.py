@@ -3,6 +3,7 @@ import email
 from datetime import datetime
 
 from django.conf import settings
+from django.utils import timezone
 
 from . import db
 
@@ -38,7 +39,7 @@ def build_msg_dict(msg: dict) -> dict:
             # Indexes 6+ are unusable
             # https://docs.python.org/3/library/email.utils.html#email.utils.parsedate
             date_tuple = email.utils.parsedate(value)[:6]
-            value = datetime(*date_tuple)
+            value = datetime(*date_tuple, tzinfo=timezone.utc)
 
         if key in STORE_HEADERS:
             msg_dict[key] = value
@@ -90,3 +91,24 @@ def get_all_messages(service, user_id="me"):
     db.bulk_create_messages(all_msgs)
 
     return all_msgs
+
+
+def update_messages(message_list, action):
+    request_body: {
+        'addLabelIds': [],
+        'removeLabelIds': []
+    }
+
+    if action == 'mark_read':
+        request_body['removeLabelIds'] = 'UNREAD'
+    elif action == 'mark_unread':
+        request_body['addLabelIds'] = 'UNREAD'
+    
+    for message in message_list:
+        if action == 'mark_unread' and message['config']['config_unread'] == True:
+            continue
+        if action == 'mark_read' and message['config']['config_unread'] == False:
+            continue
+        
+
+        

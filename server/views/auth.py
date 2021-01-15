@@ -2,9 +2,12 @@ from urllib.parse import urlparse, parse_qs
 
 from django.conf import settings
 from django.shortcuts import render
+from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.signals import user_logged_in
 
 from server.lib.utils import get_all_messages
+from server.models import UserSession
 
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
@@ -14,6 +17,9 @@ ACCESS_DENIED = "Authentication failed due to lack of user consent."
 RUN_SCRIPT = "Do not navigate to this URL, run the standalone script."
 SUCCESS = "Authentication Successful."
 GSERVICE_ERROR = "GMAIL API RELATED ERROR: "
+
+def get_SUCCESS(token):
+    return "Authentication Successful. Your Access token is: " + token
 
 
 def oauth2callback(request: HttpRequest) -> HttpResponse:
@@ -38,7 +44,6 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
     authorization_response = request.build_absolute_uri()
     flow.fetch_token(authorization_response=authorization_response)
 
-    # TODO: Make sessions persistent
     credentials = flow.credentials
     request.session['credentials']: dict = {
         'state': state,
@@ -49,8 +54,6 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
         'client_secret': credentials.client_secret,
         'scopes': credentials.scopes
     }
-    # with open('token.pickle', 'wb') as token:
-    #     pickle.dump(creds, token)
 
     service = build('gmail', 'v1', credentials=credentials)
     try:
@@ -58,5 +61,14 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
     except Exception as e:
         return HttpResponse(GSERVICE_ERROR + str(e))
 
-    # TODO: Return Authorization token.
-    return HttpResponse(SUCCESS)
+    # To make credentials persistent
+    access_token = credentials.token
+    try:
+        UserSession.objects.create(
+            id = 0,
+            token = access_token
+        )
+    except IntegrityError:
+        UserSession.objects.filter(pk=0).update(token=access_token)
+
+    return HttpResponse(get_SUCCESS(access_token))

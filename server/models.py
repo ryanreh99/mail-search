@@ -5,6 +5,12 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin
 )
+from django.contrib.sessions.models import Session
+
+
+class UserSession(models.Model):
+    id: int = models.PositiveSmallIntegerField(primary_key=True)
+    token: str = models.TextField()
 
 
 class UserManager(BaseUserManager):

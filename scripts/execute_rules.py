@@ -20,6 +20,7 @@ def load_rules():
         return {}
     return json.loads(file_data)
 
+
 def build_message_dict(all_message_ids):
     msg_dict = {}
     for sublist in all_message_ids:
