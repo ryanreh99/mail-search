@@ -82,6 +82,13 @@ These are the other values in can take:
 
 Note: Rules always start in Upper case.
 Validation has been added for the API endpoints,
-not for the `execute_rules.py` script.
+The script will terminate as soon as an error is encountered.
+The database will always remain consistent with the actual values in GMail.
 ```
 </details>
+
+___
+
+Requirements: Python 3.6+
+
+Tesed on windows and linux

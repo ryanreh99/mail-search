@@ -78,11 +78,12 @@ def main():
     ct = 1
     print('Taking Actions....')
     message_ids = ','.join(message_ids)
-    params = {'ids': message_ids}
+    
     for action in rules_file['actions']:
         print('Action : ' + str(ct))
         ct += 1
 
+        params = {'ids': message_ids}
         if list(action)[0] == 'view':
             endpoint = 'messages/view/'
             response = requests.get(BASE_URL + endpoint, params=params, headers=headers)

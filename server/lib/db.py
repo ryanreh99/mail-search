@@ -129,5 +129,4 @@ def fetch_messages_using_id(ids_list: list, config=True):
 def update_config_for_move(config, field):
     for label in MessageConfig.POSSIBLE_LABELS:
         if label == field:
-            print(label, getattr(config, label.lower()))
             setattr(config, label.lower(), True)
