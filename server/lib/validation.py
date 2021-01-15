@@ -20,35 +20,24 @@ def get_GET_fields(request: HttpRequest):
     return field, predicate, value
 
 
-def get_POST_fields(request: HttpRequest):
+def validate_actions(request: HttpRequest):
     ids = request.GET.get('ids', '')
     ids_list = ids.split(',')
 
-    view = request.GET.get('view', False)
-    mark_read = request.GET.get('mark_read', False)
-    mark_unread = request.GET.get('mark_unread', False)
+    mark_read = request.GET.get('mark_read', None)
+    mark_unread = request.GET.get('mark_unread', None)
     move = request.GET.get('move', None)
 
-    actions_dict = {
-        'view': view,
-        'mark_read': mark_read,
-        'mark_unread': mark_unread,
-        'move': move,
-    }
+    if mark_read is not None:
+        actions_dict = {'mark_read': mark_read == 'True'}
+    elif mark_unread is not None:
+        actions_dict = {'mark_unread': mark_unread == 'True'}
+    elif move is not None:
+        actions_dict = {'move': move}
+    else:
+        return False, False, json_error(get_INCORRECT_REQUEST_PARAMS('actions'))
 
-    return ids_list, actions_dict
-
-
-def validate_actions(request: HttpRequest):
-    ids_list, actions_dict = get_POST_fields(request)
-
-    for action in ['view', 'mark_read', 'mark_unread']:
-        if actions_dict[action] == True:
-            return True, 'view'
-    if actions_dict['move'] is not None:
-        return True, {'move': actions_dict['move']}
-    
-    return False, json_error(get_INCORRECT_REQUEST_PARAMS('actions'))
+    return True, ids_list, actions_dict
 
 
 def validate_string_fields(request: HttpRequest, users=True):

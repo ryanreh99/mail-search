@@ -26,12 +26,12 @@ paths:
   /messages/user/:
     get:
       summary: Get message ids by checking email contents.
-      security: []
       parameters:
         - in: query
           name: field
           schema:
             type: string
+          required: true
           description: >-
               can only take values - 'From' and 'To'
           example: From
@@ -39,6 +39,7 @@ paths:
           name: predicate
           schema:
             type: string
+          required: true
           description: >-
               can only take values - 'contains' and 'not equals'
           example: contains
@@ -46,6 +47,7 @@ paths:
           name: value
           schema:
             type: string
+          required: true
           description: >-
               part of emails to search for
           example: '@gmail.com'
@@ -59,12 +61,12 @@ paths:
   /messages/subject/:
     get:
       summary: Get message ids by checking body contents.
-      security: []
       parameters:
         - in: query
           name: field
           schema:
             type: string
+          required: true
           description: >-
               can only take value - 'Subject'
           example: Subject
@@ -72,6 +74,7 @@ paths:
           name: predicate
           schema:
             type: string
+          required: true
           description: >-
               can only take values - 'Contains' and 'Not equals'
           example: contains
@@ -79,6 +82,7 @@ paths:
           name: value
           schema:
             type: string
+          required: true
           description: >-
               part of the body to search for.
           example: 'Unsubscribe'
@@ -92,12 +96,12 @@ paths:
   /messages/datetime/:
     get:
       summary: Get message ids by comparing date sent.
-      security: []
       parameters:
         - in: query
           name: field
           schema:
             type: string
+          required: true
           description: >-
               can only take value - 'Date Received'
           example: Subject
@@ -105,6 +109,7 @@ paths:
           name: predicate
           schema:
             type: string
+          required: true
           description: >-
               can only take values - 'Less than' and 'Greater than'
           example: contains
@@ -112,6 +117,7 @@ paths:
           name: value
           schema:
             type: string
+          required: true
           description: >-
               Has to be in "DD/MM/YYYY" format.
           example: '24/06/2021'
@@ -122,6 +128,107 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JsonResponse'
+  /messages/view/:
+    get:
+      summary: Get message ids by checking body contents.
+      parameters:
+        - in: query
+          name: ids
+          schema:
+            type: string
+          required: true
+          description: >-
+              string of ids seperated by commas
+          example: 8abdg4567,4446dfg64,dfg7478dfg
+        - in: query
+          name: config
+          schema:
+            type: boolean
+          required: false
+          description: >-
+              Pass false to include additional message info such as sender id, receiver id and content.
+          example: False
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - required:
+                  - result
+                  - ids
+                  example: {
+                    "result": "success",
+                    "ids": [
+                        {
+                          "config": {
+                              "config_id": 10,
+                              "config_inbox": true,
+                              "config_spam": false,
+                              "config_trash": false,
+                              "config_unread": true,
+                              "config_starred": false,
+                              "config_important": true,
+                              "config_sent": false,
+                              "config_draft": false,
+                              "config_category_personal": false,
+                              "config_category_social": false,
+                              "config_category_promotions": false,
+                              "config_category_updates": true,
+                              "config_category_forums": false
+                          },
+                          "id": "176fee84774f676c",
+                          "sender_id": 3,
+                          "receiver_id": 4,
+                          "content": "abc"
+                        }
+                      ]
+                  }
+  /messages/action/:
+    post:
+      summary: Get message ids by checking body contents.
+      parameters:
+        - in: query
+          name: ids
+          schema:
+            type: string
+          required: true
+          description: >-
+              string of ids seperated by commas
+          example: 8abdg4567,4446dfg64,dfg7478dfg
+        - in: query
+          name: view
+          schema:
+            type: boolean
+          description: >-
+              pass true to display messages
+          example: true
+        - in: query
+          name: mark_read
+          schema:
+            type: boolean
+          description: >-
+              pass true to mark messages as read
+          example: true
+        - in: query
+          name: mark_unread
+          schema:
+            type: boolean
+          description: >-
+              pass true to mark messages as unread
+          example: true
+        - in: query
+          name: move
+          schema:
+            type: string
+          description: >-
+              pass the label to move the messages to
+          example: "INBOX"
+      responses:
+        '200':
+          description: OK
+
 components:
   schemas:
     JsonResponse:

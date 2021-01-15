@@ -22,7 +22,7 @@
       "view": "True"
     },
     {
-      "mark_read": "True"
+      "mark_unread": "True"
     },
     {
       "move": "INBOX"

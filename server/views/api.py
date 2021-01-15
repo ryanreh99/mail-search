@@ -2,6 +2,7 @@ from django.db import connection
 from django.http import HttpRequest, HttpResponse
 
 from server.lib.response import json_success, json_error
+from server.lib.utils import update_mail_messages
 from server.lib.db import (
     fetch_using_users,
     fetch_using_subject,
@@ -66,6 +67,7 @@ def fetch_datetime(request: HttpRequest) -> HttpResponse:
         {'ids': fetch_using_datetime(field, predicate, value)}
     )
 
+
 @authenticated_rest_endpoint
 def display_messages(request: HttpRequest) -> HttpResponse:
     if request.method != "GET":
@@ -89,6 +91,13 @@ def update_messages(request: HttpRequest) -> HttpResponse:
     if request.method != "POST":
         return json_error(get_INCORRECT_REQUEST_METHOD_ERROR('POST'))
 
-    result, action = validate_actions(request)
+    result, ids_list, action_dict = validate_actions(request)
     if not result:
-        return action
+        return action_dict
+
+    result = update_mail_messages(ids_list, action_dict)
+    if not result:
+        return json_error({'data': "Check rules, error received from GMail API."})
+    
+
+    return json_success({})

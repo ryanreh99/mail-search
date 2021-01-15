@@ -11,11 +11,12 @@ def authenticated_rest_endpoint(function):
         token = UserSession.objects.get(pk=0).token
         try:
             auth_type, access_token = request.META['HTTP_AUTHORIZATION'].split(' ')
-            if auth_type == 'Bearer' and access_token == token:
-                return function(request, *args, **kwargs)
-            else:
-                return json_error({'data': "Invalid OAuth Access Token."})
-        except Exception as e:
+        except Exception:
+            return json_error({'data': "OAuth Access Token is required. Set correct headers."})
+
+        if auth_type == 'Bearer' and access_token == token:
+            return function(request, *args, **kwargs)
+        else:
             return json_error({'data': "Invalid OAuth Access Token."})
 
     wrap.__doc__ = function.__doc__

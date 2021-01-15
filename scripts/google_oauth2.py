@@ -19,13 +19,11 @@ def main():
     flow.redirect_uri = settings.REDIRECT_URI
 
     authorization_url, state = flow.authorization_url(
-        # Enable offline access to be able to refresh an access token without re-prompting the user for permission.
         access_type='offline',
         state=None,
-        # allow user to select an account amongst the multiple accounts they may have current sessions for.
+        # allow user to select an account amongst the
+        # multiple accounts they may have current sessions for.
         prompt='select_account',
-        # Enable incremental authorizations.
-        # TODO: https://developers.google.com/identity/protocols/oauth2/web-server#exchange-authorization-code
         include_granted_scopes='true',
     )
 

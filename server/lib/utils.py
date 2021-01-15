@@ -1,11 +1,13 @@
 import base64
 import email
+import requests
 from datetime import datetime
 
 from django.conf import settings
 from django.utils import timezone
 
 from . import db
+from server.models import UserSession, Message, MessageConfig
 
 def build_msg_dict(msg: dict) -> dict:
     msg_dict = {}
@@ -93,22 +95,46 @@ def get_all_messages(service, user_id="me"):
     return all_msgs
 
 
-def update_messages(message_list, action):
-    request_body: {
+def update_mail_messages(message_list, action_dict):
+    request_body = {
         'addLabelIds': [],
         'removeLabelIds': []
     }
 
-    if action == 'mark_read':
+    if 'mark_read' in action_dict:
         request_body['removeLabelIds'] = 'UNREAD'
-    elif action == 'mark_unread':
+    elif 'mark_unread' in action_dict:
         request_body['addLabelIds'] = 'UNREAD'
+    elif 'move' in action_dict:
+        request_body['addLabelIds'] = action_dict['move']
     
-    for message in message_list:
-        if action == 'mark_unread' and message['config']['config_unread'] == True:
-            continue
-        if action == 'mark_read' and message['config']['config_unread'] == False:
-            continue
+    try:
+        token = UserSession.objects.get(pk=0).token
+    except Exception as e:
+        return False
+
+    headers = {'Authorization': 'Bearer ' + token}
+    for id in message_list:
+        url = f'https://gmail.googleapis.com/gmail/v1/users/me/messages/{id}/modify'
+        response = requests.post(url, params=request_body, headers=headers)
+
+        if 'error' in response.json():
+            print(response.json())
+            return False
+
+        message = db.fetch_messages_using_id([id])[0]
+        config_id = Message.objects.get(id=id).config_id
+        config = MessageConfig.objects.get(id=config_id)
+
+        if 'mark_read' in action_dict:
+            config.unread = False
+        elif 'mark_unread' in action_dict:
+            config.unread = True
+        elif 'move' in action_dict:
+            db.update_config_for_move(config, action_dict['move'])
         
+        config.save()
+
+    return True
 
         
