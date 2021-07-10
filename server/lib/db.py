@@ -82,6 +82,15 @@ def fetch_using_datetime(field: str, predicate: str, value: str) -> list:
 
     return [obj['id'] for obj in queryset.values('id')]
 
+def fetch_content_using_ids(ids_list: list):
+    """
+    Get all messagess content for list of message ids.
+    """
+    return [
+        message["content"]
+        for message in
+        Message.objects.filter(id__in=ids_list).values("content")
+    ]
 
 def fetch_messages_using_id(ids_list: list, config=True):
     """

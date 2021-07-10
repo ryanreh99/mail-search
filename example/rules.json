@@ -22,10 +22,10 @@
       "view": "True"
     },
     {
-      "mark_unread": "True"
+      "mark_read": "True"
     },
     {
-      "move": "INBOX"
+      "move": "STARRED"
     }
   ]
 }

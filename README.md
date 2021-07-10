@@ -21,17 +21,20 @@ pip install -r requirements.txt
 
 # Start the Django server
 python manage.py runserver
-python -m scripts.google_oauth2 # In a separate terminal
+# Use the UI to interact or you could just run the following scripts:
 
-# Run the script to execute your actions
+# In a separate terminal
+python -m scripts.google_oauth2
 python -m scripts.execute_rules
-
-
-# To test another user: reset the db by running
 python -m scripts.flush_db
 ```
 ___
 
+## UI Screen
+
+![pic](https://user-images.githubusercontent.com/40122794/125173169-8d524a80-e1db-11eb-86f6-9c08a6515d33.png)
+
+___
 ## API Documentation:
 
 View the `mail_search.yaml` file.
@@ -92,3 +95,5 @@ ___
 Requirements: Python 3.6+
 
 Tesed on windows and linux
+
+____

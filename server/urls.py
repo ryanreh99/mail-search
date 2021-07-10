@@ -8,9 +8,18 @@ from server.views.api import (
     display_messages,
     update_messages,
 )
-
+from server.views.home import (
+    upload,
+    home,
+    reset,
+    signin,
+)
 
 urlpatterns = [
+    path('home', home, name='home'),
+    path('upload', upload, name='upload'),
+    path('reset', reset, name='reset'),
+    path('signin', signin, name='signin'),
     path('accounts/google/', oauth2callback, name='oauth2callback'),
     path('messages/user/', fetch_users, name='fetch-users'),
     path('messages/subject/', fetch_subject, name='fetch-subject'),

@@ -45,7 +45,7 @@ def oauth2callback(request: HttpRequest) -> HttpResponse:
     flow.fetch_token(authorization_response=authorization_response)
 
     credentials = flow.credentials
-    request.session['credentials']: dict = {
+    request.session['credentials'] = {
         'state': state,
         'token': credentials.token,
         'refresh_token': credentials.refresh_token,
